@@ -23,6 +23,7 @@ limitations under the License.
 #include <cassert>
 #include <iostream>
 #include <mutex>
+#include <sstream>
 
 using namespace nuraft;
 
