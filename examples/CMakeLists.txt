@@ -34,15 +34,15 @@ target_link_libraries(stack_server
         ${LIBRARIES})
 
 
-# === Example replicated calculator ===
-add_executable(project_server
-        project_ops/project_server.cxx
-        logger.cc
-        in_memory_log_store.cxx)
+# # === Example replicated calculator ===
+# add_executable(project_server
+#         project_ops/project_server.cxx
+#         logger.cc
+#         in_memory_log_store.cxx)
 
-target_link_libraries(project_server
-        ${LIBRARY_NAME}
-        ${LIBRARIES})
+# target_link_libraries(project_server
+#         ${LIBRARY_NAME}
+#         ${LIBRARIES})
 
 
 

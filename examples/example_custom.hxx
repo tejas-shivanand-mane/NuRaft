@@ -17,12 +17,8 @@ limitations under the License.
 
 #pragma once
 // #include <chrono>
-#include <cstring>
-#include <string>
-
 
 using namespace nuraft;
-using namespace std;
 
 
 using raft_result = cmd_result< ptr<buffer> >;

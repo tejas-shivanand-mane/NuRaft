@@ -24,6 +24,7 @@ limitations under the License.
 #include <iostream>
 #include <mutex>
 #include <sstream>
+#include <stack>
 
 using namespace nuraft;
 
