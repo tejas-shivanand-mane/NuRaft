@@ -36,7 +36,7 @@ static const raft_params::return_method_type CALL_TYPE
     = raft_params::blocking;
 //  = raft_params::async_handler;
 
-#include "example_custom.hxx"
+#include "example_project.hxx"
 
 void handle_result(ptr<TestSuite::Timer> timer,
                    raft_result& result,

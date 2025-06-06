@@ -66,17 +66,51 @@ public:
         bool parse_result = static_cast<bool>(iss >> command);
         assert(parse_result && "Failed to parse command integer from input string");
 
-        assert((command == 0 || command == 1) && "Command must be 0 (insert) or 1 (erase)");
-        //
-        // if (command == 0) {
-        //     my_project.push(0);
-        // } else {
-        //     if (!my_project.empty()) {
-        //         my_project.pop();
-        //
-        //     }
-        // }
 
+        if (command >= 0 && command <= 3) {
+            int id;
+            if (!(iss >> id)) {
+                std::cerr << "Expected ID after command " << command << "\n";
+                return nullptr;
+            }
+
+            switch (command) {
+            case 0: projects.insert(id); break;
+            case 1:
+                projects.erase(id);
+                workson.erase(id);
+                break;
+            case 2: employees.insert(id); break;
+            case 3:
+                employees.erase(id);
+                for (auto& [proj, emps] : workson) {
+                    emps.erase(id);
+                }
+                break;
+            }
+        } else if (command == 4) {
+            std::string token;
+            if (!(iss >> token)) {
+                std::cerr << "Expected mapping like 1-2 after 4\n";
+                return nullptr;
+            }
+            size_t dash = token.find('-');
+            if (dash == std::string::npos) {
+                std::cerr << "Invalid format: " << token << "\n";
+                return nullptr;
+            }
+
+            int proj = std::stoi(token.substr(0, dash));
+            int emp = std::stoi(token.substr(dash + 1));
+
+            if (projects.count(proj) && employees.count(emp)) {
+                workson[proj].insert(emp);
+            } else {
+                std::cerr << "Invalid mapping: project or employee does not exist\n";
+            }
+        } else {
+            std::cerr << "Unknown command: " << command << "\n";
+        }
 
         // Update last committed index number.
         last_committed_idx_ = log_idx;
@@ -176,7 +210,7 @@ private:
 
     std::unordered_set<int> projects;
     std::unordered_set<int> employees;
-    std::unordered_map<int, int> workson;
+    std::unordered_map<int, std::unordered_set<int>> workson;
 
 
 

@@ -184,7 +184,7 @@ void loop() {
 
     try_add_servers_if_leader();
 
-    std::ifstream infile("../../commands.txt");  // Correct relative path
+    std::ifstream infile("../../commands_project.txt");  // Correct relative path
     if (!infile.is_open()) {
         std::cerr << "Failed to open command file at ../../nuraft/commands.txt" << std::endl;
         return;
