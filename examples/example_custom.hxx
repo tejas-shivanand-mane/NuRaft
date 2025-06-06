@@ -22,6 +22,8 @@ limitations under the License.
 
 
 using namespace nuraft;
+using namespace std;
+
 
 using raft_result = cmd_result< ptr<buffer> >;
 
