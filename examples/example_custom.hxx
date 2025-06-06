@@ -18,6 +18,7 @@ limitations under the License.
 #pragma once
 // #include <chrono>
 #include <cstring>
+#include <string>
 
 
 using namespace nuraft;
