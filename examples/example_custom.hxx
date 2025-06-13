@@ -139,7 +139,7 @@ void try_add_servers_if_leader() {
         std::cout << "Node 1 is now the leader. Adding other nodes...\n";
 
         // Add server 2
-        char cmd_add2[1000] = "add 2 10.128.0.38:10002";
+        char cmd_add2[1000] = "add 2 10.128.0.54:10001";
         auto tokens2 = tokenize(cmd_add2);
         bool result2 = do_cmd(tokens2);
         std::cout << "Add server 2 result: " << result2 << std::endl;
@@ -164,7 +164,7 @@ void try_add_servers_if_leader() {
         std::cout << "Server 2 has joined. Proceeding to add server 3...\n";
 
         // Add server 3
-        char cmd_add3[1000] = "add 3 10.128.0.52:10003";
+        char cmd_add3[1000] = "add 3 10.128.0.57:10001";
         auto tokens3 = tokenize(cmd_add3);
         bool result3 = do_cmd(tokens3);
         std::cout << "Add server 3 result: " << result3 << std::endl;
