@@ -160,7 +160,7 @@ void try_add_servers_if_leader() {
         std::cout << "Node 1 is now the leader. Adding other nodes...\n";
 
         // Read IP list from file
-        auto ips = read_ips("ips.txt");
+        auto ips = read_ips("../../gcp_ips.txt");
         if (ips.size() < 2) {
             std::cerr << "Not enough IPs in file to add servers\n";
             return;
@@ -169,7 +169,7 @@ void try_add_servers_if_leader() {
         // Skip first IP (leader)
         for (size_t i = 1; i < ips.size(); ++i) {
             int server_id = static_cast<int>(i + 1); // start server ids from 2 upwards
-            std::string cmd = "add " + std::to_string(server_id) + " " + ips[i];
+            std::string cmd = "add " + std::to_string(server_id) + " " + ips[i] + ":10001";
             auto tokens = tokenize(cmd.c_str()); // Adjust if tokenize needs string or char*
             bool result = do_cmd(tokens);
             std::cout << "Add server " << server_id << " result: " << result << std::endl;
