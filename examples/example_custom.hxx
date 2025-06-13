@@ -18,6 +18,12 @@ limitations under the License.
 #pragma once
 // #include <chrono>
 
+#include <fstream>
+#include <vector>
+#include <string>
+#include <iostream>
+
+
 using namespace nuraft;
 
 
@@ -130,44 +136,63 @@ std::vector<std::string> tokenize(const char* str, char c = ' ') {
     return tokens;
 }
 
+
+std::vector<std::string> read_ips(const std::string& filename) {
+    std::vector<std::string> ips;
+    std::ifstream infile(filename);
+    std::string line;
+    while (std::getline(infile, line)) {
+        if (!line.empty()) {
+            ips.push_back(line);
+        }
+    }
+    return ips;
+}
+
 void try_add_servers_if_leader() {
-    if (stuff.server_id_ == 1) {
+    if (stuff.server_id_ == 1) 
+    {
+            
         std::cout << "Waiting for leader election...\n";
         while (!stuff.raft_instance_->is_leader()) {
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         std::cout << "Node 1 is now the leader. Adding other nodes...\n";
 
-        // Add server 2
-        char cmd_add2[1000] = "add 2 10.128.0.54:10001";
-        auto tokens2 = tokenize(cmd_add2);
-        bool result2 = do_cmd(tokens2);
-        std::cout << "Add server 2 result: " << result2 << std::endl;
-
-        // ⏳ Wait until server 2 appears in committed config
-        while (true) {
-            auto conf = stuff.raft_instance_->get_config();
-            if (conf) {
-                auto& servers = conf->get_servers();
-                bool found = false;
-                for (auto& s : servers) {
-                    if (s->get_id() == 2) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) break;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        // Read IP list from file
+        auto ips = read_ips("ips.txt");
+        if (ips.size() < 2) {
+            std::cerr << "Not enough IPs in file to add servers\n";
+            return;
         }
 
-        std::cout << "Server 2 has joined. Proceeding to add server 3...\n";
+        // Skip first IP (leader)
+        for (size_t i = 1; i < ips.size(); ++i) {
+            int server_id = static_cast<int>(i + 1); // start server ids from 2 upwards
+            std::string cmd = "add " + std::to_string(server_id) + " " + ips[i];
+            auto tokens = tokenize(cmd.c_str()); // Adjust if tokenize needs string or char*
+            bool result = do_cmd(tokens);
+            std::cout << "Add server " << server_id << " result: " << result << std::endl;
 
-        // Add server 3
-        char cmd_add3[1000] = "add 3 10.128.0.57:10001";
-        auto tokens3 = tokenize(cmd_add3);
-        bool result3 = do_cmd(tokens3);
-        std::cout << "Add server 3 result: " << result3 << std::endl;
+            // Wait for server to appear in committed config
+            while (true) {
+                auto conf = stuff.raft_instance_->get_config();
+                if (conf) {
+                    auto& servers = conf->get_servers();
+                    bool found = false;
+                    for (auto& s : servers) {
+                        if (s->get_id() == server_id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            }
+
+            std::cout << "Server " << server_id << " has joined.\n";
+        }
     }
 }
 
