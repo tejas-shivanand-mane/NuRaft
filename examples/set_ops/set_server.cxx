@@ -32,6 +32,9 @@ using namespace nuraft;
 
 namespace set_server {
 
+
+
+
 static const raft_params::return_method_type CALL_TYPE
     = raft_params::blocking;
 //  = raft_params::async_handler;
