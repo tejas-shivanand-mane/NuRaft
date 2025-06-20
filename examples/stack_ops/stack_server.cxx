@@ -28,6 +28,9 @@ limitations under the License.
 
 #include <stdio.h>
 
+uint64_t start_time_us = 0;
+
+
 using namespace nuraft;
 
 namespace stack_server {
@@ -42,18 +45,24 @@ void handle_result(ptr<TestSuite::Timer> timer,
                    raft_result& result,
                    ptr<std::exception>& err)
 {
+    uint64_t latency_us = timer->getTimeUs();
+    auto now = std::chrono::system_clock::now();
+    auto now_us = std::chrono::duration_cast<std::chrono::microseconds>(
+                      now.time_since_epoch()).count();
+    now_us = now_us - start_time_us;
+
     if (result.get_result_code() != cmd_result_code::OK) {
         // Something went wrong.
         // This means committing this log failed,
         // but the log itself is still in the log store.
-        std::cout << "failed: " << result.get_result_code() << ", "
-                  << TestSuite::usToString( timer->getTimeUs() )
-                  << std::endl;
+        std::cout << "failed: " << result.get_result_code()
+          << ", latency: " << latency_us << " us"
+          << ", time: " << now_us << " us" << std::endl;
         return;
     }
-    std::cout << "succeeded, "
-              << TestSuite::usToString( timer->getTimeUs() )
-              << std::endl;
+    std::cout << "succeeded, latency: " << latency_us << " us"
+                  << ", time: " << now_us << " us" << std::endl;
+
 }
 
 void append_log(const std::string& cmd,
@@ -189,6 +198,11 @@ int main(int argc, char** argv) {
 
 
     init_raft( cs_new<stack_state_machine>() );
+
+    start_time_us = std::chrono::duration_cast<std::chrono::microseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()).count();
+
+
     loop();
 
     return 0;
