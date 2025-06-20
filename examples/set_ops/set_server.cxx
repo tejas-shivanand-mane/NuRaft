@@ -42,6 +42,7 @@ void handle_result(ptr<TestSuite::Timer> timer,
                    raft_result& result,
                    ptr<std::exception>& err)
 {
+    uint64_t latency_us = timer->getTimeUs();
     if (result.get_result_code() != cmd_result_code::OK) {
         // Something went wrong.
         // This means committing this log failed,
@@ -51,9 +52,7 @@ void handle_result(ptr<TestSuite::Timer> timer,
                   << std::endl;
         return;
     }
-    std::cout << "succeeded, "
-              << TestSuite::usToString( timer->getTimeUs() )
-              << std::endl;
+    std::cout << "succeeded, latency: " << latency_us << " us" << std::endl;
 }
 
 void append_log(const std::string& cmd,

@@ -221,9 +221,9 @@ void loop() {
         while (std::getline(infile, line))
         {
 
-            auto now = std::chrono::system_clock::now();
-            auto micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
-            std::cout << "[InputCmd #" << cmd_number << "] [Time (us): " << micros << "] " << line << std::endl;
+            //auto now = std::chrono::system_clock::now();
+            //auto micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+            //std::cout << "[InputCmd #" << cmd_number << "] [Time (us): " << micros << "] " << line << std::endl;
             cmd_number++;
 
             #if defined(__linux__) || defined(__APPLE__)
