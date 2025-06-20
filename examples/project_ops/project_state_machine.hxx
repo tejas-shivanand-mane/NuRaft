@@ -56,7 +56,7 @@ public:
 
         auto now = std::chrono::system_clock::now();
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
-        std::cout << "[commitCmd #" << cmd_number << "] [Time (us): " << micros << "] " <<"<<" << str << ">>" << std::endl;
+        // std::cout << "[commitCmd #" << cmd_number << "] [Time (us): " << micros << "] " <<"<<" << str << ">>" << std::endl;
         cmd_number++;
 
 
