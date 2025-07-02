@@ -304,7 +304,7 @@ void init_raft(ptr<state_machine> sm_instance) {
     // Upto 5 logs will be preserved ahead the last snapshot.
     params.reserved_log_items_ = 5;
     // Snapshot will be created for every 5 log appends.
-    params.snapshot_distance_ = 5;
+    params.snapshot_distance_ = 1000000;
     // Client timeout: 3000 ms.
     params.client_req_timeout_ = 3000;
     // According to this method, `append_log` function
