@@ -75,6 +75,9 @@ void append_log(const std::string& cmd,
         return;
     }
 
+    // To measure the elapsed time.
+    ptr<TestSuite::Timer> timer = cs_new<TestSuite::Timer>();
+
     std::string cascaded_str;
     for (size_t ii=1; ii<tokens.size(); ++ii) {
         cascaded_str += tokens[ii] + " ";
@@ -86,8 +89,7 @@ void append_log(const std::string& cmd,
     buffer_serializer bs(new_log);
     bs.put_str(cascaded_str);
 
-    // To measure the elapsed time.
-    ptr<TestSuite::Timer> timer = cs_new<TestSuite::Timer>();
+
 
     // Do append.
     ptr<raft_result> ret = stuff.raft_instance_->append_entries( {new_log} );
@@ -168,13 +170,31 @@ bool do_cmd(const std::vector<std::string>& tokens) {
         // e.g.) msg hello world
         if (std::stoi(tokens[1]) == 2)
         {
+            ptr<TestSuite::Timer> timer = cs_new<TestSuite::Timer>();
+
+
+
             int read_value = global_stack_sm->my_stack.top();
             std::cout<< "READ TYPE TXN" << std::endl;
+
+
+            uint64_t latency_us = timer->getTimeUs();
+
+            auto now = std::chrono::system_clock::now();
+            auto now_us = std::chrono::duration_cast<std::chrono::microseconds>(
+                            now.time_since_epoch()).count();
+            now_us = now_us - start_time_us;
+
+            std::cout << "succeeded, latency: " << latency_us << " us"
+                        << ", time: " << now_us << " us" << std::endl;
+
+
+
             return true;
         }
         else
         {
-        append_log(cmd, tokens);
+            append_log(cmd, tokens);
             
         }
 
