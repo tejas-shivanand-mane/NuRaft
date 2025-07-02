@@ -35,6 +35,8 @@ using namespace nuraft;
 
 namespace stack_server {
 
+ptr<stack_state_machine> global_stack_sm;
+
 static const raft_params::return_method_type CALL_TYPE
     = raft_params::blocking;
 //  = raft_params::async_handler;
@@ -164,7 +166,18 @@ bool do_cmd(const std::vector<std::string>& tokens) {
 
     } else if ( cmd == "msg" ) {
         // e.g.) msg hello world
+        if (std::stoi(tokens[1]) == 2)
+        {
+            int read_value = global_stack_sm->my_stack.top();
+            std::cout<< "READ TYPE TXN" << std::endl;
+            return true;
+        }
+        else
+        {
         append_log(cmd, tokens);
+            
+        }
+
 
     } else if ( cmd == "add" ) {
         // e.g.) add 2 localhost:12345
@@ -196,8 +209,8 @@ int main(int argc, char** argv) {
     std::cout << "    Endpoint:     " << stuff.endpoint_ << std::endl;
 
 
-
-    init_raft( cs_new<stack_state_machine>() );
+    global_stack_sm = cs_new<stack_state_machine>();
+    init_raft( global_stack_sm );
 
     start_time_us = std::chrono::duration_cast<std::chrono::microseconds>(
                     std::chrono::system_clock::now().time_since_epoch()).count();

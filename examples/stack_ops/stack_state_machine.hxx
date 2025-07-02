@@ -30,6 +30,8 @@ using namespace nuraft;
 
 class stack_state_machine : public state_machine {
 public:
+    std::stack<int> my_stack;
+
     stack_state_machine()
         : last_committed_idx_(0), my_stack() {
 
@@ -68,7 +70,7 @@ public:
         bool parse_result = static_cast<bool>(iss >> command);
         assert(parse_result && "Failed to parse command integer from input string");
 
-        assert((command == 0 || command == 1) && "Command must be 0 (insert) or 1 (erase)");
+        assert((command == 0 || command == 1 || command == 2) && "Command must be 0 (insert) or 1 (erase)");
 
         if (command == 0) {
             my_stack.push(0);
@@ -176,7 +178,6 @@ private:
     // Mutex for last snapshot.
     std::mutex last_snapshot_lock_;
 
-    std::stack<int> my_stack;
 
     int cmd_number = 0;
 };
